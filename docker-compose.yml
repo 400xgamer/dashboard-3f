@@ -1,0 +1,17 @@
+services:
+  dashboard-3f:
+    build: .
+    container_name: dashboard-3f
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      BASIC_USER: admin
+      BASIC_PASS: bte3vYupFWinFR825hyt
+      DB_HOST: u3gnz8eszn84fyjbjo25pzk3
+      DB_PORT: 5432
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: CUlihN0Sa3AhHMZ5JhoeczzfkbU49ObOLM54wA6pH9GuijtuV2GZXd51OYdk0PHX
+      DB_SSL: "false"
+    ports:
+      - "8095:3000"
