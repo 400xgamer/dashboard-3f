@@ -36,8 +36,6 @@ function auth(req, res, next) {
 
 app.use(auth);
 
-const toMs = (v) => v ? String(Math.round(Number(v))) : '0';
-
 app.get('/health', async (req, res) => {
   try {
     await pool.query('SELECT 1');
@@ -47,67 +45,43 @@ app.get('/health', async (req, res) => {
   }
 });
 
+// ── Lista de leads ──────────────────────────────────────────────────────────
 app.get('/api/leads', async (req, res) => {
   try {
     const { rows } = await pool.query(`
       SELECT
-        lead_id, numero, nome_contato, instancia,
-        origem_lead, origem_canal, campanha, landing_page,
-        utm_source, utm_medium, utm_campaign, utm_content,
-        status_atendimento, status_lead,
-        produto_detectado, quantidade_detectada, medida_detectada,
-        uso_detectado, cidade_detectada, tem_arte,
-        COALESCE(prazo_detectado, '') AS prazo_detectado,
-        COALESCE(acabamento_detectado, '') AS acabamento_detectado,
-        historico_json,
-        CASE WHEN vendedor_notificado = true THEN 'true' ELSE 'false' END AS vendedor_notificado,
-        CASE WHEN vendedor_notificado = true THEN 'true' ELSE 'false' END AS handoff_sucesso,
-        COALESCE(EXTRACT(EPOCH FROM ultima_notificacao_vendedor) * 1000, 0) AS ultima_notificacao_vendedor,
-        COALESCE(EXTRACT(EPOCH FROM created_at) * 1000, 0) AS created_at,
-        COALESCE(EXTRACT(EPOCH FROM updated_at) * 1000, 0) AS updated_at,
-        COALESCE(EXTRACT(EPOCH FROM ultima_interacao_at) * 1000, 0) AS ultima_interacao_at,
-        COALESCE(EXTRACT(EPOCH FROM primeira_entrada_at) * 1000, 0) AS primeira_entrada_at,
-        COALESCE(EXTRACT(EPOCH FROM handoff_at) * 1000, 0) AS handoff_at,
-        CASE WHEN perdido_inatividade = true THEN 'true' ELSE 'false' END AS perdido_inatividade
-      FROM leads_atendimento
-      WHERE numero NOT IN (SELECT numero FROM numeros_teste)
-      ORDER BY updated_at DESC
+        numero,
+        nome_contato,
+        etapa_atual,
+        produto_interesse,
+        origem_canal,
+        onde_achou,
+        finalidade,
+        quantidade,
+        tem_logo,
+        status_atendimento,
+        vendedor_notificado,
+        COALESCE(EXTRACT(EPOCH FROM atualizado_em) * 1000, 0) AS atualizado_em,
+        COALESCE(EXTRACT(EPOCH FROM criado_em)    * 1000, 0) AS criado_em
+      FROM leads_sdr
+      ORDER BY atualizado_em DESC
       LIMIT 1000;
     `);
 
     res.json(rows.map(l => ({
-      lead_id: l.lead_id || '',
-      numero: l.numero || '',
-      nome_contato: l.nome_contato || '',
-      instancia: l.instancia || '',
-      origem_lead: l.origem_lead || '',
-      origem_canal: l.origem_canal || '',
-      campanha: l.campanha || '',
-      landing_page: l.landing_page || '',
-      utm_source: l.utm_source || '',
-      utm_medium: l.utm_medium || '',
-      utm_campaign: l.utm_campaign || '',
-      utm_content: l.utm_content || '',
-      status_atendimento: l.status_atendimento || 'ia',
-      status_lead: l.status_lead || 'novo',
-      produto_detectado: l.produto_detectado || 'indefinido',
-      quantidade_detectada: l.quantidade_detectada || '',
-      medida_detectada: l.medida_detectada || '',
-      uso_detectado: l.uso_detectado || '',
-      cidade_detectada: l.cidade_detectada || '',
-      tem_arte: l.tem_arte || '',
-      prazo_detectado: l.prazo_detectado || '',
-      acabamento_detectado: l.acabamento_detectado || '',
-      historico_json: l.historico_json || '[]',
+      numero:              l.numero || '',
+      nome_contato:        l.nome_contato || '',
+      etapa_atual:         l.etapa_atual || 'novo',
+      produto_interesse:   l.produto_interesse || 'indefinido',
+      origem_canal:        l.origem_canal || '',
+      onde_achou:          l.onde_achou || '',
+      finalidade:          l.finalidade || '',
+      quantidade:          l.quantidade || '',
+      tem_logo:            l.tem_logo || '',
+      status_atendimento:  l.status_atendimento || 'sdr',
       vendedor_notificado: String(l.vendedor_notificado || 'false'),
-      handoff_sucesso: String(l.handoff_sucesso || 'false'),
-      ultima_notificacao_vendedor: toMs(l.ultima_notificacao_vendedor),
-      created_at: toMs(l.created_at),
-      updated_at: toMs(l.updated_at),
-      ultima_interacao_at: toMs(l.ultima_interacao_at),
-      primeira_entrada_at: toMs(l.primeira_entrada_at),
-      handoff_at: toMs(l.handoff_at),
-      perdido_inatividade: String(l.perdido_inatividade || 'false')
+      atualizado_em:       String(Math.round(Number(l.atualizado_em || 0))),
+      criado_em:           String(Math.round(Number(l.criado_em || 0))),
     })));
   } catch (err) {
     console.error('GET /api/leads error:', err);
@@ -115,124 +89,151 @@ app.get('/api/leads', async (req, res) => {
   }
 });
 
-app.get('/api/leads/eventos', async (req, res) => {
-  try {
-    const { rows } = await pool.query(`
-      SELECT
-        evento_id, lead_id, numero, nome_contato, tipo_evento,
-        origem_lead, origem_canal, campanha, landing_page,
-        utm_source, utm_medium, utm_campaign, utm_content,
-        produto_detectado, quantidade_detectada, medida_detectada,
-        uso_detectado, cidade_detectada, tem_arte,
-        COALESCE(prazo_detectado, '') AS prazo_detectado,
-        COALESCE(acabamento_detectado, '') AS acabamento_detectado,
-        status_lead, status_atendimento,
-        CASE WHEN handoff = true THEN 'true' ELSE 'false' END AS handoff,
-        COALESCE(EXTRACT(EPOCH FROM created_at) * 1000, 0) AS created_at,
-        observacao
-      FROM eventos_leads
-      WHERE numero NOT IN (SELECT numero FROM numeros_teste)
-      ORDER BY created_at DESC
-      LIMIT 1000;
-    `);
-
-    res.json(rows.map(e => ({
-      evento_id: e.evento_id || '',
-      lead_id: e.lead_id || '',
-      numero: e.numero || '',
-      nome_contato: e.nome_contato || '',
-      tipo_evento: e.tipo_evento || '',
-      origem_lead: e.origem_lead || '',
-      origem_canal: e.origem_canal || '',
-      campanha: e.campanha || '',
-      landing_page: e.landing_page || '',
-      utm_source: e.utm_source || '',
-      utm_medium: e.utm_medium || '',
-      utm_campaign: e.utm_campaign || '',
-      utm_content: e.utm_content || '',
-      produto_detectado: e.produto_detectado || 'indefinido',
-      quantidade_detectada: e.quantidade_detectada || '',
-      medida_detectada: e.medida_detectada || '',
-      uso_detectado: e.uso_detectado || '',
-      cidade_detectada: e.cidade_detectada || '',
-      tem_arte: e.tem_arte || '',
-      prazo_detectado: e.prazo_detectado || '',
-      acabamento_detectado: e.acabamento_detectado || '',
-      status_lead: e.status_lead || '',
-      status_atendimento: e.status_atendimento || '',
-      handoff: String(e.handoff || 'false'),
-      created_at: toMs(e.created_at),
-      observacao: e.observacao || ''
-    })));
-  } catch (err) {
-    console.error('GET /api/leads/eventos error:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
+// ── Resumo / KPIs ───────────────────────────────────────────────────────────
 app.get('/api/leads/resumo', async (req, res) => {
   try {
     const { rows } = await pool.query(`
       WITH base AS (
-        SELECT *,
-          COALESCE(NULLIF(utm_campaign, ''), NULLIF(campanha, ''), 'sem_campanha') AS campanha_final,
-          COALESCE(NULLIF(produto_detectado, ''), 'indefinido') AS produto_final
-        FROM leads_atendimento
-        WHERE numero NOT IN (SELECT numero FROM numeros_teste)
-      ), resumo AS (
+        SELECT * FROM leads_sdr
+      ),
+      kpis AS (
         SELECT
-          COUNT(*) AS total_leads,
-          COUNT(*) FILTER (WHERE created_at::date = CURRENT_DATE) AS leads_hoje,
-          COUNT(*) FILTER (WHERE status_atendimento = 'vendedor') AS enviados_vendedor,
-          COUNT(*) FILTER (WHERE status_lead = 'qualificado') AS qualificados,
-          COUNT(*) FILTER (WHERE status_lead = 'em_qualificacao') AS em_qualificacao,
-          COUNT(*) FILTER (WHERE status_lead = 'sem_resposta' OR perdido_inatividade = true) AS sem_resposta,
-          COUNT(*) FILTER (WHERE status_lead = 'perdido') AS perdidos,
-          ROUND(((COUNT(*) FILTER (WHERE status_atendimento = 'vendedor')::numeric / NULLIF(COUNT(*), 0)) * 100), 2) AS taxa_qualificacao
+          COUNT(*)                                                        AS total_leads,
+          COUNT(*) FILTER (WHERE criado_em::date = CURRENT_DATE)         AS leads_hoje,
+          COUNT(*) FILTER (WHERE vendedor_notificado = true)             AS enviados_vendedor,
+          COUNT(*) FILTER (WHERE status_atendimento = 'sdr')             AS em_qualificacao,
+          ROUND(
+            (COUNT(*) FILTER (WHERE vendedor_notificado = true)::numeric
+             / NULLIF(COUNT(*), 0)) * 100, 1
+          )                                                               AS taxa_qualificacao
         FROM base
-      ), por_campanha AS (
-        SELECT COALESCE(json_agg(json_build_object('campanha', campanha_final, 'total', total, 'enviados_vendedor', enviados_vendedor, 'sem_resposta', sem_resposta) ORDER BY total DESC), '[]'::json) AS dados
+      ),
+      por_produto AS (
+        SELECT COALESCE(json_agg(
+          json_build_object('produto', produto, 'total', total, 'vendedor', vendedor)
+          ORDER BY total DESC
+        ), '[]'::json) AS dados
         FROM (
-          SELECT campanha_final, COUNT(*) AS total,
-            COUNT(*) FILTER (WHERE status_atendimento = 'vendedor') AS enviados_vendedor,
-            COUNT(*) FILTER (WHERE status_lead = 'sem_resposta' OR perdido_inatividade = true) AS sem_resposta
-          FROM base GROUP BY campanha_final ORDER BY total DESC LIMIT 20
+          SELECT
+            COALESCE(NULLIF(produto_interesse,''), 'indefinido') AS produto,
+            COUNT(*)                                              AS total,
+            COUNT(*) FILTER (WHERE vendedor_notificado = true)   AS vendedor
+          FROM base
+          GROUP BY produto
+          ORDER BY total DESC LIMIT 10
         ) x
-      ), por_produto AS (
-        SELECT COALESCE(json_agg(json_build_object('produto', produto_final, 'total', total, 'enviados_vendedor', enviados_vendedor) ORDER BY total DESC), '[]'::json) AS dados
+      ),
+      por_origem AS (
+        SELECT COALESCE(json_agg(
+          json_build_object('origem', origem, 'total', total, 'vendedor', vendedor)
+          ORDER BY total DESC
+        ), '[]'::json) AS dados
         FROM (
-          SELECT produto_final, COUNT(*) AS total,
-            COUNT(*) FILTER (WHERE status_atendimento = 'vendedor') AS enviados_vendedor
-          FROM base GROUP BY produto_final ORDER BY total DESC LIMIT 20
+          SELECT
+            COALESCE(NULLIF(origem_canal,''), 'desconhecido') AS origem,
+            COUNT(*)                                           AS total,
+            COUNT(*) FILTER (WHERE vendedor_notificado = true) AS vendedor
+          FROM base
+          GROUP BY origem
+          ORDER BY total DESC LIMIT 10
         ) x
-      ), por_status AS (
-        SELECT COALESCE(json_agg(json_build_object('status_lead', status_lead, 'total', total) ORDER BY total DESC), '[]'::json) AS dados
+      ),
+      por_etapa AS (
+        SELECT COALESCE(json_agg(
+          json_build_object('etapa', etapa, 'total', total)
+          ORDER BY total DESC
+        ), '[]'::json) AS dados
         FROM (
-          SELECT COALESCE(NULLIF(status_lead, ''), 'sem_status') AS status_lead, COUNT(*) AS total
-          FROM base GROUP BY COALESCE(NULLIF(status_lead, ''), 'sem_status') ORDER BY total DESC
+          SELECT
+            COALESCE(NULLIF(etapa_atual,''), 'novo') AS etapa,
+            COUNT(*) AS total
+          FROM base
+          GROUP BY etapa
+          ORDER BY total DESC
+        ) x
+      ),
+      por_dia AS (
+        SELECT COALESCE(json_agg(
+          json_build_object('dia', dia, 'total', total)
+          ORDER BY dia
+        ), '[]'::json) AS dados
+        FROM (
+          SELECT
+            criado_em::date AS dia,
+            COUNT(*)        AS total
+          FROM base
+          WHERE criado_em >= CURRENT_DATE - INTERVAL '6 days'
+          GROUP BY dia
+          ORDER BY dia
+        ) x
+      ),
+      onde_achou_agg AS (
+        SELECT COALESCE(json_agg(
+          json_build_object('onde', onde, 'total', total)
+          ORDER BY total DESC
+        ), '[]'::json) AS dados
+        FROM (
+          SELECT
+            COALESCE(NULLIF(onde_achou,''), 'não informado') AS onde,
+            COUNT(*) AS total
+          FROM base
+          WHERE onde_achou IS NOT NULL AND onde_achou != ''
+          GROUP BY onde
+          ORDER BY total DESC LIMIT 10
         ) x
       )
-      SELECT resumo.*, por_campanha.dados AS por_campanha, por_produto.dados AS por_produto, por_status.dados AS por_status
-      FROM resumo, por_campanha, por_produto, por_status;
+      SELECT
+        kpis.*,
+        por_produto.dados   AS por_produto,
+        por_origem.dados    AS por_origem,
+        por_etapa.dados     AS por_etapa,
+        por_dia.dados       AS por_dia,
+        onde_achou_agg.dados AS onde_achou
+      FROM kpis, por_produto, por_origem, por_etapa, por_dia, onde_achou_agg;
     `);
 
     const r = rows[0] || {};
     res.json({
-      total_leads: Number(r.total_leads || 0),
-      leads_hoje: Number(r.leads_hoje || 0),
+      total_leads:       Number(r.total_leads || 0),
+      leads_hoje:        Number(r.leads_hoje || 0),
       enviados_vendedor: Number(r.enviados_vendedor || 0),
-      qualificados: Number(r.qualificados || 0),
-      em_qualificacao: Number(r.em_qualificacao || 0),
-      sem_resposta: Number(r.sem_resposta || 0),
-      perdidos: Number(r.perdidos || 0),
+      em_qualificacao:   Number(r.em_qualificacao || 0),
       taxa_qualificacao: Number(r.taxa_qualificacao || 0),
-      por_campanha: r.por_campanha || [],
-      por_produto: r.por_produto || [],
-      por_status: r.por_status || [],
-      atualizado_em: new Date().toISOString()
+      por_produto:       r.por_produto || [],
+      por_origem:        r.por_origem || [],
+      por_etapa:         r.por_etapa || [],
+      por_dia:           r.por_dia || [],
+      onde_achou:        r.onde_achou || [],
+      atualizado_em:     new Date().toISOString(),
     });
   } catch (err) {
     console.error('GET /api/leads/resumo error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ── Histórico de mensagens dos leads (para análise de padrões) ──────────────
+app.get('/api/leads/mensagens', async (req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT
+        numero,
+        nome_contato,
+        produto_interesse,
+        origem_canal,
+        msg->>'content' AS mensagem,
+        to_timestamp((msg->>'ts')::bigint / 1000) AS horario
+      FROM leads_sdr,
+        jsonb_array_elements(historico_conversa::jsonb) AS msg
+      WHERE msg->>'role' = 'user'
+        AND historico_conversa IS NOT NULL
+        AND historico_conversa != '[]'
+      ORDER BY numero, horario DESC
+      LIMIT 2000;
+    `);
+    res.json(rows);
+  } catch (err) {
+    console.error('GET /api/leads/mensagens error:', err);
     res.status(500).json({ error: err.message });
   }
 });
