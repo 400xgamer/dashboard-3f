@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Dashboard SDR – 3F Resinados</title>
+<title>Dashboard SDR – 3F</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
@@ -13,19 +12,18 @@
 body{font-family:'Inter',sans-serif;background:#0b0f1a;color:#e2e8f0;min-height:100vh}
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;background:#111827;border-bottom:1px solid #1f2937;position:sticky;top:0;z-index:100;gap:18px}
 .topbar-logo{display:flex;align-items:center;gap:12px}
-.topbar-logo .dot{width:10px;height:10px;border-radius:50%;background:#6366f1;box-shadow:0 0 8px #6366f1}
+.dot{width:10px;height:10px;border-radius:50%;background:#6366f1;box-shadow:0 0 8px #6366f1}
 .topbar-logo h1{font-size:16px;font-weight:700;letter-spacing:.5px}
-.topbar-logo span{font-size:12px;color:#6b7280;font-weight:400}
+.topbar-logo span{font-size:12px;color:#6b7280}
 .topbar-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-.url-input{background:#1f2937;border:1px solid #374151;color:#e2e8f0;padding:8px 14px;border-radius:8px;font-size:12px;width:300px;font-family:inherit}
 #btn-refresh{background:#6366f1;color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:.2s}
 #btn-refresh:hover{background:#4f46e5}
 #btn-refresh:disabled{opacity:.5;cursor:not-allowed}
 .last-update{font-size:11px;color:#6b7280}
-#status-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;margin-right:6px}
+#status-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;display:inline-block;margin-right:4px}
 #status-dot.ok{background:#10b981}
 .section{padding:28px 32px}
-.section-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#6b7280;margin-bottom:16px}
+.section-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#6b7280;margin-bottom:16px}
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px}
 .kpi-card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;transition:.2s}
 .kpi-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--accent,#6366f1)}
@@ -48,38 +46,35 @@ tbody tr{border-bottom:1px solid #1f2937;transition:.15s}
 tbody tr:hover{background:#111827}
 tbody td{padding:11px 14px;vertical-align:middle}
 .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px}
-.badge-ia{background:#1e3a5f;color:#60a5fa}
+.badge-sdr{background:#1e3a5f;color:#60a5fa}
 .badge-vendedor{background:#14532d;color:#4ade80}
-.badge-curioso{background:#1c1917;color:#a8a29e}
-.badge-qualificado{background:#3b1f6b;color:#a78bfa}
-.badge-desqualificado{background:#3b0a0a;color:#f87171}
+.badge-sim{background:#14532d;color:#4ade80}
+.badge-nao{background:#3b0a0a;color:#f87171}
 .badge-chaveiro{background:#1e3a5f;color:#60a5fa}
 .badge-caneta{background:#1c3a1e;color:#86efac}
 .badge-adesivo{background:#3b2714;color:#fb923c}
 .badge-indefinido{background:#1c1917;color:#78716c}
-.badge-sim{background:#14532d;color:#4ade80}
-.badge-nao{background:#3b0a0a;color:#f87171}
+.badge-lp{background:#1e3348;color:#7dd3fc}
+.badge-instagram{background:#3b1a3b;color:#e879f9}
+.badge-google{background:#1e3a1e;color:#86efac}
+.badge-facebook{background:#1a2a4a;color:#93c5fd}
+.badge-anuncio{background:#2d2014;color:#fbbf24}
+.badge-direto{background:#1c1917;color:#78716c}
+.badge-etapa{background:#1a1f35;color:#a5b4fc}
+.filter-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.filter-bar select,.search-input{background:#1f2937;border:1px solid #374151;color:#e2e8f0;padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit}
+.search-input{width:220px}
 .empty{text-align:center;padding:40px;color:#4b5563;font-size:13px}
 .loading{text-align:center;padding:40px;color:#6366f1;font-size:13px;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.filter-bar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-.filter-bar select{background:#1f2937;border:1px solid #374151;color:#e2e8f0;padding:7px 12px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit}
-.search-input{background:#1f2937;border:1px solid #374151;color:#e2e8f0;padding:7px 14px;border-radius:8px;font-size:12px;width:220px;font-family:inherit}
+small{color:#94a3b8}
 .warn{color:#f59e0b}
 .danger{color:#ef4444}
-small{color:#94a3b8}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:#0b0f1a}
 ::-webkit-scrollbar-thumb{background:#374151;border-radius:4px}
-@media(max-width:1100px){
-  .charts-grid{grid-template-columns:1fr}
-  .url-input{width:230px}
-}
-@media(max-width:780px){
-  .topbar{padding:16px 18px;align-items:flex-start}
-  .section,.table-section{padding-left:18px;padding-right:18px}
-  .charts-grid{padding-left:18px;padding-right:18px}
-}
+@media(max-width:1100px){.charts-grid{grid-template-columns:1fr}}
+@media(max-width:780px){.topbar{padding:16px 18px;align-items:flex-start}.section,.table-section{padding-left:18px;padding-right:18px}.charts-grid{padding-left:18px;padding-right:18px}}
 </style>
 </head>
 <body>
@@ -89,28 +84,26 @@ small{color:#94a3b8}
     <div class="dot"></div>
     <div>
       <h1>SDR Dashboard <span style="color:#6366f1">3F</span></h1>
-      <span>Painel de Leads – IA Lia</span>
+      <span>Sofia — Painel de Leads</span>
     </div>
   </div>
   <div class="topbar-right">
     <span id="status-dot"></span>
     <span class="last-update" id="last-update">–</span>
-    <input id="webhook-url" class="url-input" type="text" placeholder="URL do endpoint /api/leads" />
-    <input id="webhook-events-url" class="url-input" type="text" placeholder="URL do endpoint /api/leads/eventos (opcional)" />
     <button id="btn-refresh" onclick="loadData()">↻ Atualizar</button>
   </div>
 </div>
 
+<!-- KPIs -->
 <div class="section">
   <div class="section-title">Visão Geral</div>
-  <div class="kpi-grid" id="kpi-grid">
-    <div class="kpi-card loading">Carregando...</div>
-  </div>
+  <div class="kpi-grid" id="kpi-grid"><div class="kpi-card loading">Carregando...</div></div>
 </div>
 
+<!-- Gráficos -->
 <div class="charts-grid">
   <div class="chart-card">
-    <h3>Funil de Eventos</h3>
+    <h3>Funil de Qualificação</h3>
     <div class="chart-wrap"><canvas id="chart-funil"></canvas></div>
   </div>
   <div class="chart-card">
@@ -118,79 +111,74 @@ small{color:#94a3b8}
     <div class="chart-wrap"><canvas id="chart-produto"></canvas></div>
   </div>
   <div class="chart-card">
-    <h3>Leads por Campanha</h3>
-    <div class="chart-wrap"><canvas id="chart-campanha"></canvas></div>
+    <h3>Origem dos Leads</h3>
+    <div class="chart-wrap"><canvas id="chart-origem"></canvas></div>
   </div>
   <div class="chart-card">
-    <h3>Evolução de Entradas (7 dias)</h3>
+    <h3>Entradas (últimos 7 dias)</h3>
     <div class="chart-wrap"><canvas id="chart-evolucao"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>Leads por Etapa da Conversa</h3>
+    <div class="chart-wrap"><canvas id="chart-etapa"></canvas></div>
+  </div>
+  <div class="chart-card">
+    <h3>Onde os Leads Encontraram a 3F</h3>
+    <div class="chart-wrap"><canvas id="chart-onde"></canvas></div>
   </div>
 </div>
 
+<!-- Tabela -->
 <div class="table-section">
   <div class="tabs">
-    <button class="tab active" data-tab="todos">Todos os Leads</button>
+    <button class="tab active" data-tab="todos">Todos</button>
     <button class="tab" data-tab="vendedor">Enviados ao Vendedor</button>
-    <button class="tab" data-tab="lia-inativos">Sem resposta à Lia (+2h)</button>
-    <button class="tab" data-tab="perdidos">Perdidos por Inatividade</button>
-    <button class="tab" data-tab="vendedor-sem-resposta">Sem resposta com vendedor (+24h)</button>
+    <button class="tab" data-tab="sdr">Na Sofia</button>
+    <button class="tab" data-tab="sem-logo">Sem Logo</button>
   </div>
 
   <div class="filter-bar">
-    <input class="search-input" id="search" type="text" placeholder="🔍 Buscar por nome ou número..." oninput="renderTable()"/>
+    <input class="search-input" id="search" type="text" placeholder="🔍 Nome ou número..." oninput="renderTable()"/>
     <select id="f-produto" onchange="renderTable()">
       <option value="">Todos os produtos</option>
-      <option value="chaveiro_pe_de_galinha">chaveiro_pe_de_galinha</option>
-      <option value="caneta_soft_touch">caneta_soft_touch</option>
-      <option value="adesivo_vinil">adesivo_vinil</option>
-      <option value="indefinido">indefinido</option>
+      <option value="chaveiros personalizados">Chaveiros</option>
+      <option value="adesivos vinil personalizados">Adesivos</option>
+      <option value="canetas soft touch personalizadas">Canetas</option>
+      <option value="indefinido">Indefinido</option>
     </select>
-    <select id="f-campanha" onchange="renderTable()">
-      <option value="">Todas as campanhas</option>
+    <select id="f-origem" onchange="renderTable()">
+      <option value="">Todas as origens</option>
+      <option value="landing_page">Landing Page</option>
+      <option value="instagram">Instagram</option>
+      <option value="google">Google</option>
+      <option value="facebook">Facebook</option>
+      <option value="anuncio_pago">Anúncio Pago</option>
+      <option value="whatsapp_direto">WhatsApp Direto</option>
     </select>
     <select id="f-status" onchange="renderTable()">
       <option value="">Todos os status</option>
-      <option value="ia">Na IA</option>
+      <option value="sdr">Na Sofia</option>
       <option value="vendedor">Com Vendedor</option>
     </select>
   </div>
 
-  <div id="table-container">
-    <div class="loading">Aguardando dados...</div>
-  </div>
+  <div id="table-container"><div class="loading">Aguardando dados...</div></div>
 </div>
 
 <script>
-const LEADS_KEY = '3f_leads_webhook';
-const EVENTS_KEY = '3f_events_webhook';
-let currentTab = 'todos';
 let allLeads = [];
-let allEvents = [];
+let resumo = {};
 let charts = {};
-
-document.getElementById('webhook-url').value = localStorage.getItem(LEADS_KEY) || '/api/leads';
-document.getElementById('webhook-events-url').value = localStorage.getItem(EVENTS_KEY) || '/api/leads/eventos';
-
-document.getElementById('webhook-url').addEventListener('change', e => localStorage.setItem(LEADS_KEY, e.target.value.trim()));
-document.getElementById('webhook-events-url').addEventListener('change', e => localStorage.setItem(EVENTS_KEY, e.target.value.trim()));
-
-document.querySelectorAll('.tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentTab = btn.dataset.tab;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    renderTable();
-  });
-});
+let currentTab = 'todos';
 
 const COLORS = ['#6366f1','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4','#f97316','#ec4899'];
 
 const tsToDate = ts => ts && ts !== '0' ? new Date(Number(ts)) : null;
 const formatDate = d => d ? d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '–';
-const elapsed = ts => ts && ts !== '0' ? (Date.now() - Number(ts)) : null;
+const elapsed = ts => ts && ts !== '0' ? Date.now() - Number(ts) : null;
 const elapsedLabel = ms => {
-  if (!ms) return '–';
-  const h = Math.floor(ms / 3600000);
+  if (!ms || ms < 0) return '–';
+  const h = Math.floor(ms/3600000);
   if (h < 1) return `${Math.floor(ms/60000)}min`;
   if (h < 24) return `${h}h`;
   return `${Math.floor(h/24)}d`;
@@ -200,28 +188,29 @@ function badge(val, map) {
   const cls = map[val] || map._default || 'indefinido';
   return `<span class="badge badge-${cls}">${val || '–'}</span>`;
 }
-const produtoBadge = v => badge(v, {
-  chaveiro_pe_de_galinha:'chaveiro',
-  caneta_soft_touch:'caneta',
-  adesivo_vinil:'adesivo',
-  indefinido:'indefinido',
-  _default:'indefinido'
-});
-const statusBadge = v => badge(v, {ia:'ia', vendedor:'vendedor', _default:'ia'});
-const leadBadge = v => badge(v, {
-  curioso:'curioso',
-  qualificado:'qualificado',
-  desqualificado:'desqualificado',
-  _default:'curioso'
-});
+
+const produtoBadge = v => {
+  if (!v || v === 'indefinido') return '<span class="badge badge-indefinido">indefinido</span>';
+  if (v.includes('chaveiro')) return '<span class="badge badge-chaveiro">Chaveiro</span>';
+  if (v.includes('adesivo'))  return '<span class="badge badge-adesivo">Adesivo</span>';
+  if (v.includes('caneta'))   return '<span class="badge badge-caneta">Caneta</span>';
+  return `<span class="badge badge-indefinido">${v}</span>`;
+};
+
+const origemBadge = v => {
+  const map = { landing_page:'lp', instagram:'instagram', google:'google', facebook:'facebook', anuncio_pago:'anuncio', whatsapp_direto:'direto', _default:'direto' };
+  const labels = { landing_page:'Landing Page', instagram:'Instagram', google:'Google', facebook:'Facebook', anuncio_pago:'Anúncio', whatsapp_direto:'Direto', _default:'–' };
+  const cls = map[v] || 'direto';
+  const lbl = labels[v] || v || '–';
+  return `<span class="badge badge-${cls}">${lbl}</span>`;
+};
+
+const statusBadge = v => badge(v, { sdr:'sdr', vendedor:'vendedor', _default:'sdr' });
+const etapaBadge = v => `<span class="badge badge-etapa">${(v||'novo').replace(/_/g,' ')}</span>`;
 const boolBadge = v => `<span class="badge badge-${String(v)==='true'?'sim':'nao'}">${String(v)==='true'?'Sim':'Não'}</span>`;
 
 function countBy(arr, keyFn) {
-  return arr.reduce((acc, item) => {
-    const k = keyFn(item);
-    acc[k] = (acc[k] || 0) + 1;
-    return acc;
-  }, {});
+  return arr.reduce((acc, item) => { const k = keyFn(item); acc[k] = (acc[k]||0)+1; return acc; }, {});
 }
 
 function mkChart(id, type, labels, data) {
@@ -259,99 +248,21 @@ function mkChart(id, type, labels, data) {
   });
 }
 
-function deriveEventsUrl(urlLeads) {
-  if (!urlLeads) return '';
-  if (urlLeads.endsWith('/api/leads')) return urlLeads + '/eventos';
-  return urlLeads.replace(/\/api\/leads(?:\/)?$/, '/api/leads/eventos');
-}
-
-async function loadData() {
-  const urlLeads = document.getElementById('webhook-url').value.trim();
-  let urlEvents = document.getElementById('webhook-events-url').value.trim();
-
-  if (!urlLeads) {
-    alert('Cole a URL do endpoint /api/leads.');
-    return;
-  }
-
-  if (!urlEvents) {
-    urlEvents = deriveEventsUrl(urlLeads);
-    document.getElementById('webhook-events-url').value = urlEvents;
-    localStorage.setItem(EVENTS_KEY, urlEvents);
-  }
-
-  const btn = document.getElementById('btn-refresh');
-  btn.disabled = true;
-  btn.textContent = '↻ Buscando...';
-  document.getElementById('status-dot').className = '';
-
-  try {
-    const [resLeads, resEvents] = await Promise.all([
-      fetch(urlLeads, { headers: { 'Accept': 'application/json' } }),
-      fetch(urlEvents, { headers: { 'Accept': 'application/json' } })
-    ]);
-
-    if (!resLeads.ok) throw new Error(`Leads HTTP ${resLeads.status}`);
-    if (!resEvents.ok) throw new Error(`Eventos HTTP ${resEvents.status}`);
-
-    let leads = await resLeads.json();
-    let events = await resEvents.json();
-
-    if (!Array.isArray(leads)) leads = leads.data || leads.rows || leads.leads || [];
-    if (!Array.isArray(events)) events = events.data || events.rows || events.eventos || [];
-
-    allLeads = leads;
-    allEvents = events;
-
-    renderAll();
-
-    document.getElementById('status-dot').className = 'ok';
-    document.getElementById('last-update').textContent = 'Atualizado ' + new Date().toLocaleTimeString('pt-BR');
-  } catch (e) {
-    document.getElementById('status-dot').className = '';
-    document.getElementById('table-container').innerHTML =
-      `<div class="empty">❌ Erro ao carregar: ${e.message}<br><small>Verifique os endpoints e se o n8n está acessível.</small></div>`;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '↻ Atualizar';
-  }
-}
-
-function renderAll() {
-  populateCampaignFilter();
-  renderKPIs();
-  renderCharts();
-  renderTable();
-}
-
 function renderKPIs() {
-  const totalLeads = allLeads.length;
-  const totalEntradas = allEvents.filter(e => e.tipo_evento === 'lead_entrada').length || totalLeads;
-  const totalQualificados = allEvents.filter(e => e.tipo_evento === 'qualificado_ia').length;
-  const totalHandoffs = allEvents.filter(e => e.tipo_evento === 'handoff_vendedor').length;
-  const totalInativos = allEvents.filter(e => e.tipo_evento === 'lead_inativo').length;
-  const comVendedor = allLeads.filter(l => l.status_atendimento === 'vendedor').length;
-
-  const taxaQualificacao = totalEntradas ? Math.round((totalQualificados / totalEntradas) * 100) : 0;
-  const taxaHandoff = totalEntradas ? Math.round((totalHandoffs / totalEntradas) * 100) : 0;
-  const taxaAbandono = totalEntradas ? Math.round((totalInativos / totalEntradas) * 100) : 0;
-
-  const handoffTimes = allLeads
-    .filter(l => l.handoff_at && l.created_at)
-    .map(l => Number(l.handoff_at) - Number(l.created_at))
-    .filter(ms => ms > 0);
-
-  const tempoMedioHandoff = handoffTimes.length
-    ? `${Math.round(handoffTimes.reduce((a,b)=>a+b,0)/handoffTimes.length/60000)} min`
-    : '–';
+  const total      = allLeads.length;
+  const vendedor   = allLeads.filter(l => l.vendedor_notificado === 'true').length;
+  const emSdr      = allLeads.filter(l => l.status_atendimento === 'sdr').length;
+  const semLogo    = allLeads.filter(l => l.tem_logo === 'nao' || l.tem_logo === 'não').length;
+  const taxa       = total ? Math.round((vendedor/total)*100) : 0;
+  const hoje       = resumo.leads_hoje || 0;
 
   const cards = [
-    {label:'Leads Totais',value:totalLeads,sub:'base atual',accent:'#6366f1',icon:'👥'},
-    {label:'Qualificados pela IA',value:totalQualificados,sub:`taxa ${taxaQualificacao}%`,accent:'#8b5cf6',icon:'🧠'},
-    {label:'Handoffs ao Vendedor',value:totalHandoffs,sub:`taxa ${taxaHandoff}%`,accent:'#10b981',icon:'🤝'},
-    {label:'Leads Inativos',value:totalInativos,sub:`abandono ${taxaAbandono}%`,accent:'#ef4444',icon:'⏳'},
-    {label:'Com Vendedor Agora',value:comVendedor,sub:'estado atual',accent:'#f59e0b',icon:'📞'},
-    {label:'Tempo Médio até Handoff',value:tempoMedioHandoff,sub:'quando disponível',accent:'#06b6d4',icon:'⏱️'}
+    {label:'Leads Totais',      value:total,    sub:'base atual',          accent:'#6366f1', icon:'👥'},
+    {label:'Enviados ao Vendedor', value:vendedor, sub:`taxa ${taxa}%`,    accent:'#10b981', icon:'🤝'},
+    {label:'Na Sofia',          value:emSdr,    sub:'em qualificação',     accent:'#8b5cf6', icon:'🤖'},
+    {label:'Entrados Hoje',     value:hoje,     sub:'novos leads',         accent:'#f59e0b', icon:'📅'},
+    {label:'Sem Logo',          value:semLogo,  sub:'podem precisar de arte', accent:'#ef4444', icon:'🖼️'},
+    {label:'Taxa de Qualif.',   value:`${taxa}%`, sub:'sdr → vendedor',   accent:'#06b6d4', icon:'📈'},
   ];
 
   document.getElementById('kpi-grid').innerHTML = cards.map(c => `
@@ -365,82 +276,99 @@ function renderKPIs() {
 }
 
 function renderCharts() {
-  const entradas = allEvents.filter(e => e.tipo_evento === 'lead_entrada').length || allLeads.length;
-  const qualificados = allEvents.filter(e => e.tipo_evento === 'qualificado_ia').length;
-  const handoffs = allEvents.filter(e => e.tipo_evento === 'handoff_vendedor').length;
-  const inativos = allEvents.filter(e => e.tipo_evento === 'lead_inativo').length;
-  mkChart('chart-funil', 'bar', ['Entradas', 'Qualificados', 'Handoffs', 'Inativos'], [entradas, qualificados, handoffs, inativos]);
+  // Funil
+  const total    = allLeads.length;
+  const vendedor = allLeads.filter(l => l.vendedor_notificado === 'true').length;
+  const emSdr    = allLeads.filter(l => l.status_atendimento === 'sdr').length;
+  mkChart('chart-funil','bar',
+    ['Total de Leads','Na Sofia','Enviados ao Vendedor'],
+    [total, emSdr, vendedor]
+  );
 
-  const prod = countBy(allLeads, l => l.produto_detectado || 'indefinido');
-  mkChart('chart-produto', 'doughnut', Object.keys(prod), Object.values(prod));
+  // Produto
+  const prod = (resumo.por_produto || []);
+  mkChart('chart-produto','doughnut',
+    prod.map(p => p.produto),
+    prod.map(p => p.total)
+  );
 
-  const camp = countBy(allLeads, l => l.campanha || '(sem campanha)');
-  const campTop = Object.entries(camp).sort((a,b) => b[1]-a[1]).slice(0, 7);
-  mkChart('chart-campanha', 'bar', campTop.map(x => x[0]), campTop.map(x => x[1]));
+  // Origem
+  const orig = (resumo.por_origem || []);
+  mkChart('chart-origem','bar',
+    orig.map(o => o.origem),
+    orig.map(o => o.total)
+  );
 
-  const days = [];
-  const counts = [];
+  // Evolução 7 dias
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const dias = [], counts = [];
   for (let i = 6; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i); d.setHours(0,0,0,0);
-    const next = new Date(d); next.setDate(next.getDate() + 1);
-    days.push(d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'}));
-    counts.push(allEvents.filter(e => {
-      const ts = Number(e.created_at || 0);
-      return e.tipo_evento === 'lead_entrada' && ts >= d.getTime() && ts < next.getTime();
-    }).length);
+    const d = new Date(hoje); d.setDate(d.getDate()-i);
+    const label = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});
+    dias.push(label);
+    const iso = d.toISOString().slice(0,10);
+    const entry = (resumo.por_dia||[]).find(x => String(x.dia).slice(0,10) === iso);
+    counts.push(entry ? Number(entry.total) : 0);
   }
-  mkChart('chart-evolucao', 'line', days, counts);
-}
+  mkChart('chart-evolucao','line', dias, counts);
 
-function semRespostaLiaFn(l) {
-  const ms = elapsed(l.ultima_interacao_at);
-  return l.status_atendimento === 'ia' && l.handoff_sucesso !== 'true' && ms && ms > 2 * 60 * 60 * 1000;
-}
+  // Etapa
+  const etapas = (resumo.por_etapa || []);
+  mkChart('chart-etapa','bar',
+    etapas.map(e => (e.etapa||'novo').replace(/_/g,' ')),
+    etapas.map(e => e.total)
+  );
 
-function semRespostaVendedorFn(l) {
-  const ms = elapsed(l.ultima_interacao_at);
-  return l.status_atendimento === 'vendedor' && ms && ms > 24 * 60 * 60 * 1000;
+  // Onde achou
+  const onde = (resumo.onde_achou || []);
+  if (onde.length) {
+    mkChart('chart-onde','doughnut',
+      onde.map(o => o.onde),
+      onde.map(o => o.total)
+    );
+  }
 }
 
 function renderTable() {
-  const search = document.getElementById('search').value.toLowerCase();
-  const fProd = document.getElementById('f-produto').value;
-  const fCamp = document.getElementById('f-campanha').value;
+  const search  = document.getElementById('search').value.toLowerCase();
+  const fProd   = document.getElementById('f-produto').value;
+  const fOrigem = document.getElementById('f-origem').value;
   const fStatus = document.getElementById('f-status').value;
 
   let leads = allLeads.filter(l => {
-    if (search && !((l.nome_contato || '').toLowerCase().includes(search) || (l.numero || '').includes(search))) return false;
-    if (fProd && l.produto_detectado !== fProd) return false;
-    if (fCamp && l.campanha !== fCamp) return false;
+    if (search && !((l.nome_contato||'').toLowerCase().includes(search) || (l.numero||'').includes(search))) return false;
+    if (fProd   && l.produto_interesse  !== fProd)   return false;
+    if (fOrigem && l.origem_canal       !== fOrigem) return false;
     if (fStatus && l.status_atendimento !== fStatus) return false;
     return true;
   });
 
-  if (currentTab === 'vendedor') leads = leads.filter(l => l.status_atendimento === 'vendedor');
-  if (currentTab === 'lia-inativos') leads = leads.filter(semRespostaLiaFn);
-  if (currentTab === 'perdidos') leads = leads.filter(l => l.perdido_inatividade === 'true');
-  if (currentTab === 'vendedor-sem-resposta') leads = leads.filter(semRespostaVendedorFn);
+  if (currentTab === 'vendedor') leads = leads.filter(l => l.vendedor_notificado === 'true');
+  if (currentTab === 'sdr')      leads = leads.filter(l => l.status_atendimento === 'sdr');
+  if (currentTab === 'sem-logo') leads = leads.filter(l => l.tem_logo === 'nao' || l.tem_logo === 'não');
 
   if (!leads.length) {
-    document.getElementById('table-container').innerHTML = '<div class="empty">Nenhum lead encontrado para os filtros aplicados.</div>';
+    document.getElementById('table-container').innerHTML = '<div class="empty">Nenhum lead encontrado.</div>';
     return;
   }
 
   const rows = leads
-    .sort((a,b) => Number(b.updated_at || 0) - Number(a.updated_at || 0))
+    .sort((a,b) => Number(b.atualizado_em||0) - Number(a.atualizado_em||0))
     .map(l => {
-      const ms = elapsed(l.ultima_interacao_at);
+      const ms = elapsed(l.atualizado_em);
       const timeClass = ms > 172800000 ? 'danger' : ms > 86400000 ? 'warn' : '';
       return `<tr>
-        <td><strong>${l.nome_contato || '–'}</strong><br><small>${l.numero || ''}</small></td>
-        <td>${produtoBadge(l.produto_detectado)}</td>
+        <td><strong>${l.nome_contato||'–'}</strong><br><small>${l.numero||''}</small></td>
+        <td>${produtoBadge(l.produto_interesse)}</td>
         <td>${statusBadge(l.status_atendimento)}</td>
-        <td>${leadBadge(l.status_lead)}</td>
-        <td>${boolBadge(l.handoff_sucesso)}</td>
-        <td><small>${l.landing_page || '–'}</small></td>
-        <td><small>${l.campanha || '–'}</small></td>
+        <td>${etapaBadge(l.etapa_atual)}</td>
+        <td>${boolBadge(l.vendedor_notificado)}</td>
+        <td>${origemBadge(l.origem_canal)}</td>
+        <td><small>${l.finalidade||'–'}</small></td>
+        <td><small>${l.quantidade||'–'}</small></td>
+        <td>${boolBadge(l.tem_logo === 'sim' || l.tem_logo === 'tenho' ? 'true' : l.tem_logo ? 'false' : 'false')}</td>
         <td class="${timeClass}">${elapsedLabel(ms)}</td>
-        <td><small>${formatDate(tsToDate(l.created_at))}</small></td>
+        <td><small>${formatDate(tsToDate(l.criado_em))}</small></td>
       </tr>`;
     }).join('');
 
@@ -448,34 +376,62 @@ function renderTable() {
     <table>
       <thead>
         <tr>
-          <th>Contato</th>
-          <th>Produto</th>
-          <th>Status</th>
-          <th>Estágio</th>
-          <th>Handoff</th>
-          <th>Landing Page</th>
-          <th>Campanha</th>
-          <th>Última Int.</th>
-          <th>Entrou em</th>
+          <th>Contato</th><th>Produto</th><th>Status</th><th>Etapa</th>
+          <th>Vendedor</th><th>Origem</th><th>Finalidade</th>
+          <th>Qtd.</th><th>Logo</th><th>Últ. Ativ.</th><th>Entrou em</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>`;
 }
 
-function populateCampaignFilter() {
-  const sel = document.getElementById('f-campanha');
-  const current = sel.value;
-  const campanhas = [...new Set(allLeads.map(l => l.campanha).filter(Boolean))].sort();
-  sel.innerHTML = '<option value="">Todas as campanhas</option>' + campanhas.map(v => `<option value="${v}">${v}</option>`).join('');
-  if (campanhas.includes(current)) sel.value = current;
+async function loadData() {
+  const btn = document.getElementById('btn-refresh');
+  btn.disabled = true;
+  btn.textContent = '↻ Buscando...';
+  document.getElementById('status-dot').className = '';
+
+  try {
+    const [resLeads, resResumo] = await Promise.all([
+      fetch('/api/leads',         { headers:{'Accept':'application/json'} }),
+      fetch('/api/leads/resumo',  { headers:{'Accept':'application/json'} }),
+    ]);
+
+    if (!resLeads.ok)  throw new Error(`Leads HTTP ${resLeads.status}`);
+    if (!resResumo.ok) throw new Error(`Resumo HTTP ${resResumo.status}`);
+
+    allLeads = await resLeads.json();
+    resumo   = await resResumo.json();
+
+    if (!Array.isArray(allLeads)) allLeads = [];
+
+    renderKPIs();
+    renderCharts();
+    renderTable();
+
+    document.getElementById('status-dot').className = 'ok';
+    document.getElementById('last-update').textContent = 'Atualizado ' + new Date().toLocaleTimeString('pt-BR');
+  } catch(e) {
+    document.getElementById('status-dot').className = '';
+    document.getElementById('table-container').innerHTML =
+      `<div class="empty">❌ Erro: ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '↻ Atualizar';
+  }
 }
 
-setInterval(() => {
-  if (document.getElementById('webhook-url').value.trim()) loadData();
-}, 60000);
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    currentTab = btn.dataset.tab;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  });
+});
 
-if (document.getElementById('webhook-url').value.trim()) loadData();
+setInterval(loadData, 60000);
+loadData();
 </script>
 </body>
 </html>
