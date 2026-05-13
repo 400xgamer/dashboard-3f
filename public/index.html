@@ -126,6 +126,10 @@ small{color:#94a3b8}
     <h3>Onde os Leads Encontraram a 3F</h3>
     <div class="chart-wrap"><canvas id="chart-onde"></canvas></div>
   </div>
+  <div class="chart-card">
+    <h3>Landing Pages — Qual LP gerou mais leads</h3>
+    <div class="chart-wrap"><canvas id="chart-lp"></canvas></div>
+  </div>
 </div>
 
 <!-- Tabela -->
@@ -322,9 +326,15 @@ function renderCharts() {
   // Onde achou
   const onde = (resumo.onde_achou || []);
   if (onde.length) {
-    mkChart('chart-onde','doughnut',
-      onde.map(o => o.onde),
-      onde.map(o => o.total)
+    mkChart('chart-onde','doughnut', onde.map(o => o.onde), onde.map(o => o.total));
+  }
+
+  // Landing Pages
+  const lps = (resumo.por_lp || []);
+  if (lps.length) {
+    mkChart('chart-lp','bar',
+      lps.map(l => l.lp.replace('lp_','')),
+      lps.map(l => l.total)
     );
   }
 }
@@ -364,6 +374,7 @@ function renderTable() {
         <td>${etapaBadge(l.etapa_atual)}</td>
         <td>${boolBadge(l.vendedor_notificado)}</td>
         <td>${origemBadge(l.origem_canal)}</td>
+        <td><small>${l.landing_page ? l.landing_page.replace('lp_','LP ') : '–'}</small></td>
         <td><small>${l.finalidade||'–'}</small></td>
         <td><small>${l.quantidade||'–'}</small></td>
         <td>${boolBadge(l.tem_logo === 'sim' || l.tem_logo === 'tenho' ? 'true' : l.tem_logo ? 'false' : 'false')}</td>
@@ -377,7 +388,7 @@ function renderTable() {
       <thead>
         <tr>
           <th>Contato</th><th>Produto</th><th>Status</th><th>Etapa</th>
-          <th>Vendedor</th><th>Origem</th><th>Finalidade</th>
+          <th>Vendedor</th><th>Origem</th><th>Landing Page</th><th>Finalidade</th>
           <th>Qtd.</th><th>Logo</th><th>Últ. Ativ.</th><th>Entrou em</th>
         </tr>
       </thead>
