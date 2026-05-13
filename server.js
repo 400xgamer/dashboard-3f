@@ -55,6 +55,7 @@ app.get('/api/leads', async (req, res) => {
         etapa_atual,
         produto_interesse,
         origem_canal,
+        landing_page,
         onde_achou,
         finalidade,
         quantidade,
@@ -74,6 +75,7 @@ app.get('/api/leads', async (req, res) => {
       etapa_atual:         l.etapa_atual || 'novo',
       produto_interesse:   l.produto_interesse || 'indefinido',
       origem_canal:        l.origem_canal || '',
+      landing_page:        l.landing_page || '',
       onde_achou:          l.onde_achou || '',
       finalidade:          l.finalidade || '',
       quantidade:          l.quantidade || '',
@@ -181,6 +183,22 @@ app.get('/api/leads/resumo', async (req, res) => {
           GROUP BY onde
           ORDER BY total DESC LIMIT 10
         ) x
+      ),
+      por_lp AS (
+        SELECT COALESCE(json_agg(
+          json_build_object('lp', lp, 'total', total, 'vendedor', vendedor)
+          ORDER BY total DESC
+        ), '[]'::json) AS dados
+        FROM (
+          SELECT
+            COALESCE(NULLIF(landing_page,''), 'sem_lp') AS lp,
+            COUNT(*)                                     AS total,
+            COUNT(*) FILTER (WHERE vendedor_notificado = true) AS vendedor
+          FROM base
+          WHERE landing_page IS NOT NULL AND landing_page != ''
+          GROUP BY lp
+          ORDER BY total DESC LIMIT 10
+        ) x
       )
       SELECT
         kpis.*,
@@ -188,8 +206,9 @@ app.get('/api/leads/resumo', async (req, res) => {
         por_origem.dados    AS por_origem,
         por_etapa.dados     AS por_etapa,
         por_dia.dados       AS por_dia,
-        onde_achou_agg.dados AS onde_achou
-      FROM kpis, por_produto, por_origem, por_etapa, por_dia, onde_achou_agg;
+        onde_achou_agg.dados AS onde_achou,
+        por_lp.dados        AS por_lp
+      FROM kpis, por_produto, por_origem, por_etapa, por_dia, onde_achou_agg, por_lp;
     `);
 
     const r = rows[0] || {};
@@ -204,6 +223,7 @@ app.get('/api/leads/resumo', async (req, res) => {
       por_etapa:         r.por_etapa || [],
       por_dia:           r.por_dia || [],
       onde_achou:        r.onde_achou || [],
+      por_lp:            r.por_lp || [],
       atualizado_em:     new Date().toISOString(),
     });
   } catch (err) {
